@@ -1,0 +1,8 @@
+namespace: dev
+
+global:
+  replicas: 1
+  autoscaling:
+    enabled: false
+  ingress:
+    host: dev.example.local

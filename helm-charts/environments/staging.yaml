@@ -1,0 +1,11 @@
+namespace: staging
+
+global:
+  replicas: 2
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 75
+  ingress:
+    host: staging.example.com

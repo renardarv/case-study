@@ -1,0 +1,52 @@
+repositories:
+  - name: bitnami
+    url: https://charts.bitnami.com/bitnami
+
+environments:
+  dev:
+    values:
+      - environments/dev.yaml
+  prod:
+    values:
+      - environments/prod.yaml
+
+releases:
+  - name: service-a
+    chart: ./charts/app
+    namespace: {{ .Environment.Values.namespace }}
+    values:
+      - image:
+          repository: myregistry/service-a
+          tag: "1.0.0"
+      - service:
+          port: 8080
+
+  - name: service-b
+    chart: ./charts/app
+    namespace: {{ .Environment.Values.namespace }}
+    values:
+      - image:
+          repository: myregistry/service-b
+          tag: "2.1.3"
+      - service:
+          port: 3000
+
+  - name: worker-consumer
+    chart: ./charts/consumer
+    namespace: {{ .Environment.Values.namespace }}
+    values:
+      - image:
+          repository: myregistry/consumer
+          tag: "0.4.1"
+      - command: ["python"]
+      - args: ["main.py", "--mode", "worker"]
+
+  - name: redis
+    namespace: {{ .Environment.Values.namespace }}
+    chart: bitnami/redis
+    version: 19.4.0  # or latest tested version
+    values:
+      - auth:
+          enabled: true
+          password: "redispassword"  # or use externalSecret if needed
+      - architecture: standalone  # or replication/sentinel if desired

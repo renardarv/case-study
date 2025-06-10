@@ -1,0 +1,29 @@
+image:
+  repository: busybox
+  tag: latest
+  pullPolicy: IfNotPresent
+
+command: ["sh", "-c"]
+args: ["echo Hello from consumer && sleep 3600"]
+
+config:
+  enabled: true
+  data:
+    WORKER_ENV: staging
+
+externalSecret:
+  enabled: true
+  name: consumer-secrets
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  data:
+    - secretKey: WORKER_TOKEN
+      remoteRef:
+        key: kv/data/consumer
+        property: token
+
+global:
+  replicas: 1
+  autoscaling:
+    enabled: false
